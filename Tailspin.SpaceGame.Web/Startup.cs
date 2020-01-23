@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using TailSpin.SpaceGame.Web.Models;
 
 namespace TailSpin.SpaceGame.Web
@@ -35,7 +37,7 @@ namespace TailSpin.SpaceGame.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -51,12 +53,18 @@ namespace TailSpin.SpaceGame.Web
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseMvc(routes =>
+            RouteHandler rh = new RouteHandler(context =>
             {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                var routeVals = context.GetRouteData().Values;
+                return context.Response.WriteAsync($"Hello! Route values: {string.Join(", ", routeVals)}");
             });
+
+            var rb = new RouteBuilder(app, rh);
+            rb.MapRoute(name: "default",
+                template: "{controller=Home}/{action=Index}/{id?}");
+
+            var routes = rb.Build();
+            app.UseRouter(routes);
         }
     }
 }
