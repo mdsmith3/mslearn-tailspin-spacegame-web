@@ -13,7 +13,7 @@ variables:
   dockerRegistryServiceConnection: '766b0c60-ac9b-4a41-8bb7-5c903bb7f1e3'
   imageRepository: 'spacegameimage'
   containerRegistry: 'smithmacr.azurecr.io'
-  dockerfilePath: '..\Dockerfile'
+  dockerfilePath: '../Dockerfile'
   tag: '$(Build.BuildId)'
   
   # Agent VM image name
